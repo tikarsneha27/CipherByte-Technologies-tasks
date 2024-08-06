@@ -1,0 +1,17 @@
+# Credentials for accessing the MQTT broker
+# For the given example below, you can use the Javascript Web Socket Client at 
+# http://www.hivemq.com/demos/websocket-client/
+MqttBroker:
+    # The topic to publish to
+    # The last sub-topic name serves as a display category
+    topic: testtopic/weathervue/location
+    # The broker host name to sent the message to
+    host: test.mosquitto.org
+    # The username to publish as (leave empty if not required)
+    # currently not supported
+    # username: someuser
+    # The password to the account (leave empty if not required)
+    # currently not supported
+    # password: monkey123
+    # The output format (currently 'text' and 'json' are supported)
+    output: json

@@ -1,0 +1,77 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+}
+
+#weatherdisplay{
+  width: 100%;
+  align-content: center;
+}
+
+.tile {
+  border-radius: 0.5em;
+  padding: 2%;
+  margin: 2%;
+  float: left;
+  align-content: center;
+
+  background-color: rgba(51, 51, 51, .7)    
+}
+
+.tile-full {
+  width: 96%;
+  min-width: 96%;
+}
+
+.tile-half {
+  width: 46%;
+  min-width: 46%;
+}
+
+.tile-quarter {
+  width: 21%;
+  min-width: 21%;
+}
+
+@media (min-aspect-ratio: 4/3) { 
+  .tile-full {
+    width: 46%;
+    min-width: 46%;
+	}
+  
+  .tile-half {
+    width: 21%;
+    min-width: 21%;
+  }
+  
+  .tile-quarter {
+    width: 8.5%;
+    min-width: 8.5%;
+  }
+}
+
+.tile>.annotation {
+  width: 30%;
+  max-width: 30%;
+  font-weight: lighter;
+}
+
+
+.tile.value {
+    font-kerning: none;
+    font-family: monospace;
+}
+
+.tile.temperature {
+  background-color: rgba(15, 86, 209, 0.7)    
+}
+
+.tile.humidity {
+  background-color: rgba(122, 214, 206, 0.438)   
+}
+
+.clock {
+  color: white;
+  font-kerning: none;
+}

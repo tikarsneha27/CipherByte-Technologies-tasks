@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>WeatherVue</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.js"></script>
+  <script src="fittext.js"></script>
+  <link rel="stylesheet" href="weathervue.css">
+</head>
+<body>
+  <div id="app">
+    <div id="weatherdisplay">
+      <tile annotation="Homeoffice" size="half" v-bind:value="homeofficeTemperature" type="temperature"></tile>
+      <tile annotation="Homeoffice" size="half" v-bind:value="homeofficeRelhumidity" type="humidity"></tile>
+    </div>
+  </div>
+
+  <script>
+    Vue.component('tile', {
+      props: ['annotation', 'size', 'type', 'value'],
+      data: function () {
+        return {
+          count: 0
+        }
+      },
+      computed: {
+        cssClass: function () {
+          return "tile " + "tile-"+ this.size + " " + this.type;
+        },
+        unit: function() {
+          if (this.type==='temperature'){
+            return "°C"; 
+          }
+          if (this.type==='humidity'){
+            return "%"; 
+          }
+          return "";
+        }
+      },
+            
+      template: '<div :class="cssClass"><div class="annotation fittext">{{annotation}}</div><div class="value fittext" id="humidityvalue">{{value}} {{unit}}</div></div>'
+    })
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        homeofficeTemperature: '___._',
+        homeofficeRelhumidity: '___._',
+      },
+      mounted: function () {
+        var x = document.getElementsByClassName("fittext");
+        var i;
+        for (i = 0; i < x.length; i++) {
+          window.fitText( x[i] , 0.4);
+        }
+        console.log('fitted');
+      },
+      methods: {
+        ingest: function (topic, payload) {
+          console.log('ingesting for topic: ');
+          var data = JSON.parse(payload);
+          if (topic === 'testtopic/weathervue/homeoffice')
+          {
+            this.homeofficeTemperature = data.measurement.temperature;
+            this.homeofficeRelhumidity = data.measurement.relhumidity;
+          }
+          
+        },
+      }
+    })
+  </script>
+
+  <script>
+    var hostUrl = 'wss://test.mosquitto.org:8081'; 
+    var client = mqtt.connect(hostUrl);
+
+    var topic = 'testtopic/weathervue/homeoffice'
+    client.subscribe(topic);
+    console.log("Subscribed to topic '"+topic +"' at host '" + hostUrl + "'");
+    var topic = 'testtopic/weathervue/attic'
+    client.subscribe(topic);
+    console.log("Subscribed to topic '"+topic +"' at host '" + hostUrl + "'");
+    var topic = 'testtopic/weathervue/legobox'
+    client.subscribe(topic);
+    console.log("Subscribed to topic '"+topic +"' at host '" + hostUrl + "'");
+    var topic = 'testtopic/weathervue/outdoor'
+    client.subscribe(topic);
+    console.log("Subscribed to topic '"+topic +"' at host '" + hostUrl + "'");
+
+    client.on("message", function (topic, payload) {
+      app.ingest(topic, payload);
+    })
+
+    window.onbeforeunload = function(){
+      client.end()
+      console.log('Ended the mqtt client.');
+    }
+  </script>
+
+  <div>
+    <span id="clocktext" class="clock"></span>
+    <script>
+			"use strict";
+
+			var textElem = document.getElementById("clocktext");
+			var targetWidth = 1.0;  
+			var curFontSize = 20;  
+
+			function updateClock() {
+				var d = new Date();
+				var s = "";
+				s += (10 > d.getHours  () ? "0" : "") + d.getHours  () + ":";
+				s += (10 > d.getMinutes() ? "0" : "") + d.getMinutes() + ":";
+				s += (10 > d.getSeconds() ? "0" : "") + d.getSeconds();
+				textElem.textContent = s;
+				setTimeout(updateClock, 1000 - d.getTime() % 1000 + 20);
+			}
+
+			function updateTextSize() {
+				for (var i = 0; 3 > i; i++) { 
+					curFontSize *= targetWidth / (textElem.offsetWidth / textElem.parentNode.offsetWidth);
+					textElem.style.fontSize = curFontSize + "pt";
+				}
+			}
+
+			updateClock();
+			updateTextSize();
+			window.addEventListener("resize", updateTextSize);
+		</script>
+  </div>
+</body>
+</html>
